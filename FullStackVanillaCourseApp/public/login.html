@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="style.css">
+    <script src="app.js"></script>
+    <title>Sign In | Course</title>
+</head>
+
+<body>
+
+    <h1>Sign In</h1>
+
+    <!-- Sign in form -->
+    <div id="placeholder">
+        <form action="/api/session" method="POST">
+            Username
+            <input type="text" name="username">
+            <br>
+            <br> Password
+            <input type="password" name="password">
+            <br>
+            <br>
+            <input type="submit" value="Submit">
+            <br>
+        </form>
+    </div>
+
+    <script>
+        // Bind the forms
+        function bindForms() {
+            document.querySelector("form")
+                .addEventListener("submit", function (e) {
+
+                    // Stop it from submitting
+                    e.preventDefault();
+                    var formId = this.id;
+                    var path = this.action;
+                    var method = this.method.toUpperCase();
+
+                    // Turn the inputs into a payload object
+                    var payload = {};
+                    var elements = this.elements;
+                    for (var i = 0; i < elements.length; i++) {
+                        if (elements[i].type !== 'submit') {
+                            //var valueOfElement = elements[i].type == 'checkbox' ? elements[i].checked : elements[i].value;
+                            var valueOfElement = elements[i].value;
+                            payload[elements[i].name] = valueOfElement;
+                        }
+                    }
+
+                    console.log(payload);
+
+                    var headers = {};
+                    // Submit the request
+                    submitRequest(path, method, payload, headers, handleSignIn);
+                });
+        }
+
+        function handleSignIn(err, tokenObj) {
+            if (!err) {
+                console.log("Sign in successful");
+                // Save the token to local storage
+                saveToken(tokenObj);
+                // Redirect to another page
+            }
+            else {
+                // handle error
+                var divplaceholder = "placeholder";
+                console.log("Sign in failed");
+                displayError(divplaceholder, "Sign in failed. Try Again");
+            }
+
+        }
+
+        bindForms();
+    </script>
+
+</body>
+
+</html>

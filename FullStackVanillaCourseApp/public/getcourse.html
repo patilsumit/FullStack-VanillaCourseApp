@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="style.css">
+  <title>Course List</title>
+</head>
+
+<body>
+
+  <h1>Get Course Using ID</h1>
+
+  Course ID <input id="courseid" type="text" name="courseid">
+  <button type="button" onclick="getCourse()">Get Course</button>
+
+  <div id="showcourse"> </div>
+
+  <script>
+
+    function createTableFromCourse(course) {
+      // Create a table element
+      var table = document.createElement("table");
+      // Create a heading
+      // Create the row and set row data
+      for (var key in course) {
+        // Insert a row
+        var tr = table.insertRow(-1);
+        // Insert cells
+        var tcell = tr.insertCell(-1);
+        tcell.innerHTML = key;
+
+        tcell = tr.insertCell(-1);
+        tcell.innerHTML = course[key];
+      }
+
+      // Return the table element
+      return table;
+    }
+
+    function getCourse() {
+      // Create a request object
+      var xhttp = new XMLHttpRequest();
+
+      // Register the function to be called when server responds
+      xhttp.onreadystatechange = function () {
+        if (this.readyState == 4) {
+          if (this.status == 200) {
+            // Parse the JSON response
+            var course = JSON.parse(this.responseText);
+
+            var table = createTableFromCourse(course);
+
+          }
+          else {
+            var table = document.createElement("p");
+            table.innerText = this.statusText;
+          }
+          // Set the table to course list placeholder
+          var divContainer = document.getElementById("showcourse");
+          divContainer.innerHTML = "";
+          divContainer.appendChild(table);
+        }
+
+        console.log(this.readyState);
+      };
+
+      // Get id from input text box
+      var courseId = document.getElementById("courseid").value;
+      
+      if (!courseId || courseId.length < 1)
+        return;
+
+      var url = "/api/courses/" + courseId;
+
+      xhttp.open("GET", url, true);
+      // xhttp.setRequestHeader("Content-type",
+      //  "application/x-www-form-urlencoded");
+      //  xhttp.send("fname=Henry&lname=Ford");
+
+
+      xhttp.send(); // Send the request
+    }
+
+  </script>
+
+</body>
+
+</html>

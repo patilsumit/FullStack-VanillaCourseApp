@@ -1,0 +1,8 @@
+
+/* Styles for table */
+table, th, td
+{
+    margin: 10px;
+    border: solid 1px #333333;
+    /* padding: 2px 4px */
+}

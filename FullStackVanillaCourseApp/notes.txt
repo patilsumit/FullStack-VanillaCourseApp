@@ -1,0 +1,16 @@
+
+// Create a user
+
+// Update
+
+// Read
+
+// Update
+
+// Session Managment
+
+// Login/Create a Session
+
+// Update a Session
+
+// Logout/Delete a Session

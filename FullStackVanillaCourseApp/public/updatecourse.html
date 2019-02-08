@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js"></script>
+  <title>Create Course</title>
+</head>
+
+<body>
+
+  <h1>Create new course</h1>
+
+  <div id="showcourse">
+    <form action="/api/courses" method="POST">
+      Course Name
+      <input type="text" name="name">
+      <br> Author Name
+      <input type="text" name="author">
+      <br> Price
+      <input type="text" name="price">
+      <br>
+      <input type="submit" value="Submit">
+      <br>
+    </form>
+
+
+  </div>
+
+  <script>
+
+    function createTableFromCourse(course) {
+      // Create a table element
+      var table = document.createElement("table");
+      // Create a heading
+      // Create the row and set row data
+      for (var key in course) {
+        // Insert a row
+        var tr = table.insertRow(-1);
+        // Insert cells
+        var tcell = tr.insertCell(-1);
+        tcell.innerHTML = key;
+
+        tcell = tr.insertCell(-1);
+        tcell.innerHTML = course[key];
+      }
+
+      // Return the table element
+      return table;
+    }
+
+    // Bind the forms
+    function bindForms() {
+      document.querySelector("form")
+        .addEventListener("submit", function (e) {
+
+          // Stop it from submitting
+          e.preventDefault();
+          var formId = this.id;
+          var path = this.action;
+          var method = this.method.toUpperCase();
+
+          // Turn the inputs into a payload object
+          var payload = {};
+          var elements = this.elements;
+          for (var i = 0; i < elements.length; i++) {
+            if (elements[i].type !== 'submit') {
+              //var valueOfElement = elements[i].type == 'checkbox' ? elements[i].checked : elements[i].value;
+              var valueOfElement = elements[i].value;
+              payload[elements[i].name] = valueOfElement;
+            }
+          }
+
+          console.log(payload);
+
+          // Get the token
+          var token = getToken();
+          if (!token) {
+            // Display error and redirect to login page
+            return;
+          }
+          var headers = {};
+          setAuthTokenHeader(headers, token);
+          // Submit the request
+          submitRequest(path, method, payload, headers, handleCourseCreation);
+        });
+    }
+
+    // Construct the Ajax request and submit it
+
+    function handleCourseCreation(err, course) {
+      if (!err) {
+        var table = createTableFromCourse(course);
+        // Set the table to course list placeholder
+        var divContainer = document.getElementById("showcourse");
+        divContainer.innerHTML = "";
+        divContainer.appendChild(table);
+      }
+      else {
+        var table = document.createElement("p");
+        table.innerText = this.statusText;
+        // Append the table to course list placeholder
+        var divContainer = document.getElementById("showcourse");
+        divContainer.appendChild(table);
+
+      }
+          
+      console.log(this.readyState);  
+    };
+
+    bindForms();
+
+  </script>
+
+</body>
+
+</html>

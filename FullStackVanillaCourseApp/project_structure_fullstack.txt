@@ -1,0 +1,25 @@
+├── index.js  
+├── middleware - Middleware modules used during request processing 
+│   ├── auth.js  - JWT token based authentication middleware
+│   └── role-authorize.js - Role based authorization 
+├── models  - Model (Database operations). Invoked by route handlers.
+│   ├── courses.js  - Course document DB access
+│   └── users.js  - User document DB access
+├── public (View - Frontend Code). Communication to backend happends using Ajax requests to Express RestAPI
+│   ├── app.js  - Functionality for frontend. For eg: Ajax code
+│   ├── courselist.html  
+│   ├── createcourse.html  
+│   ├── getcourse.html  
+│   ├── login.html  
+│   └── style.css  
+├── routes  (Express RestAPI implementation for various routes (URL Endpoints)
+│   ├── courses.js  - Handles /api/courses routes (Implements request handler for HTTP methods)
+│   ├── home.js  
+│   ├── session.js  - Handles /api/session route
+│   └── users.js    - Handles /api/users route 
+├── test  - Unit test code. Currently only for testing functions from model (DB) module
+│   ├── dbtest-courses.js  
+│   └── dbtest-users.js  
+└── utils  
+    └── auth.js - Token verification code
+  

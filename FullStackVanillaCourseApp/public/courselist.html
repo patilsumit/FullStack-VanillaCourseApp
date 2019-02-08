@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js"></script>
+  <title>Course List</title>
+</head>
+
+<body>
+
+  <h1>Course List</h1>
+    
+ 
+  <div id="showcourse"> </div>
+
+  <!-- <button type="button" onclick="loadDoc()">Get Courses</button> -->
+  <button type="button" onclick="submitRequest('/api/courses', 
+  'GET', undefined, undefined, handleGetCourse)">Get Courses</button>
+  </div>
+
+  <script>
+
+    function createTableFromCourseList(courseList) {
+      // Create a table element
+      var table = document.createElement("table");
+      // Create a heading
+
+      // Create the row and set row data
+      for (var i = 0; i < courseList.length; i++) {
+        // Insert a row
+        var tr = table.insertRow(-1);
+        // Add id attribute for course ID
+        tr.setAttribute("id", courseList[i]._id);
+        // Insert cells
+        var tcell = tr.insertCell(-1);
+        tcell.innerHTML = courseList[i].name;
+
+        tcell = tr.insertCell(-1);
+        tcell.innerHTML = courseList[i].author;
+
+        tcell = tr.insertCell(-1);
+        tcell.innerHTML = courseList[i].price
+        // Add 2 more cells for Edit and Delete buttons
+        tcell = tr.insertCell(-1);
+        // Create edit button
+        var editButton = document.createElement("button");
+        editButton.setAttribute("type", "button");
+        editButton.setAttribute("class", "edit");
+        editButton.innerHTML = "Edit";
+        tcell.appendChild(editButton);
+
+        // Delete button
+        tcell = tr.insertCell(-1);
+        // Create delete button
+        var deleteButton = document.createElement("button");
+        deleteButton.setAttribute("type", "button");
+        deleteButton.setAttribute("class", "delete");
+        deleteButton.innerHTML = "Delete";
+        tcell.appendChild(deleteButton);
+      }
+
+      // Return the table element
+      return table;
+    }
+
+    function handleGetCourse(err, courseList) {
+      if (err) {
+        var table = document.createElement("p");
+        table.innerText = this.statusText;
+      }
+      else { // We got course list
+        var table = createTableFromCourseList(courseList);
+      }
+      // Set the table to course list placeholder
+      var divContainer = document.getElementById("showcourse");
+      divContainer.innerHTML = "";
+      divContainer.appendChild(table);
+
+      // Invoke the bind functions
+      // bindEditButtons();
+      bindDeleteButtons();
+
+    }
+
+
+    // Bind Edit buttons
+    function bindEditButtons() {
+      var elements = document.querySelectorAll("button.edit");
+      if (!elements)
+        return;
+        
+      console.log(elements);
+      for (var i in elements) {
+        elements[i].addEventListener("click", function (e) {
+          
+          console.log(e);     
+
+           var  cId=e.target.parentNode.parentNode.id;
+           console.log(cId);
+          // Display the populated form for updating course
+          var divContainer=document.getElementById('showcourse');
+          divContainer.innerHTML="";
+
+          var label=document.createElement('label');
+          var textnode=document.createTextNode('Course Name');
+          divContainer.appendChild(label);
+          label.appendChild(textnode);          
+
+          var txtname=document.createElement('input');
+          txtname.setAttribute('type','text');
+           
+          
+          var labelAuthor=document.createElement('label');
+          var textnodeAuthor=document.createTextNode('Author Name');
+          divContainer.appendChild(labelAuthor);
+          labelAuthor.appendChild(textnodeAuthor);          
+          
+          var txtauthor=document.createElement('input');
+          txtauthor.setAttribute('type','text');
+           
+          var labelPrice=document.createElement('label');
+          var textnodePrice=document.createTextNode('Price');
+          divContainer.appendChild(labelPrice);
+          labelPrice.appendChild(textnodePrice);          
+          
+          var txtprice=document.createElement('input');
+          txtprice.setAttribute('type','text');
+               
+         
+         divContainer.appendChild(label);     
+         divContainer.appendChild(txtname);     
+         divContainer.appendChild(labelAuthor);
+         divContainer.appendChild(txtauthor);
+         divContainer.appendChild(labelPrice);
+         divContainer.appendChild(txtprice);   
+         
+         // Create delete button
+        var updateButton = document.createElement("button");
+        // updateButton.setAttribute("type", "button");
+        updateButton.innerHTML = "Update";
+        divContainer.appendChild(updateButton);   
+          var url='/api/courses/'+ cId;
+        
+        submitRequest(url,'GET','undefined','undefined',handleGetSingleCourse);
+          // Get the course id
+          // Perform a get request to get course info
+          // Display a populated form with update button
+          // submitRequest(updateURL,'GET','undefined','undefined',handleGetCourse);
+         function handleGetSingleCourse(err,result){
+            console.log('Single:',result);
+            console.log(result.name);
+
+            txtname.placeholder=result.name;
+            txtauthor.placeholder=result.author;
+            txtprice.placeholder=result.price;
+          } 
+         updateButton.addEventListener('click',function(){
+          var name=txtname.value;
+          var author=txtauthor.value;
+          var price=txtprice.value; 
+          console.log(name);
+          var payload={
+             
+            name: name,
+            author :author,
+            price : price
+          };
+          submitRequest('/api/courses/'+cId,'PUT',payload,'undefined',handleUpdateRequest);
+          
+         });
+
+         function handleUpdateRequest(err,result){
+             console.log("Update Result",result);
+         }
+
+        });
+      }
+    }
+
+
+    function bindDeleteButtons(){
+      console.log("hello");
+         
+      var elements = document.querySelectorAll("button.delete");
+      if (!elements)
+        return;
+        
+      console.log(elements);
+      for (var i in elements) {
+        elements[i].addEventListener("click", function (e) {
+          
+          console.log(e);   
+          var  cId=e.target.parentNode.parentNode.id;   
+// var url='/api/courses/'+ cId;
+var payload={};
+submitRequest('/api/courses/'+cId,'DELETE',payload,'undefined',handleDeleteRequest)
+submitRequest('/api/courses','GET','undefined','undefined',handleGetCourse);
+       
+         function handleDeleteRequest(err,result){
+         console.log("Deleted Succesfully",result);
+       }
+
+      });
+    }
+  }
+  </script>
+
+</body>
+
+</html>
